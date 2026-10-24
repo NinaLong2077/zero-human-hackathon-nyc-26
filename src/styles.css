@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/* Direction: warm, playful, cozy. Accent is a tangerine like a ginger tabby. */
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", Georgia, serif;
+  --color-paper: #fbf5ea;
+  --color-card: #f3e9d6;
+  --color-ink: #2a2118;
+  --color-muted: #6f6253;
+  --color-line: #e4d6bc;
+  --color-accent: #e8641b;
+  --color-accent-ink: #ffffff;
+  --radius-card: 1.25rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+}
