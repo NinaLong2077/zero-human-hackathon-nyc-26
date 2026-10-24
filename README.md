@@ -1,196 +1,70 @@
-Welcome to your new TanStack Start app!
+# 🐾 Purrfect Hour
 
-# Getting Started
+Borrow a cat for the afternoon 🐱. Cat owners list their cat and set an hourly price. Guests book a set stretch of time, visit, and the owner gets paid.
 
-To run this application:
+**🌐 Live site: [https://purrfect-hour.whop.site](https://purrfect-hour.whop.site)**
+
+## ✨ What it does
+
+- 😺 **Browse cats.** Each listing has photos, a bio, an hourly price, the shortest and longest visit the host allows, and a neighborhood.
+- 📸 **List your cat.** Signed-in hosts add up to five photos, a price, visit limits and a private full address.
+- 🗓️ **Book time.** Guests pick a date, start time and number of hours. The total is calculated on the server.
+- ✅ **Hosts approve every request.** Guests are charged only after the host accepts. The full address is shown to a guest only once their booking is accepted.
+- 💳 **Pay with Whop checkout.** After acceptance the guest pays through a Whop checkout. The booking flips to "Paid" when Whop confirms the payment.
+- 🔑 **Sign in with Whop.** "List your cat" and "Book time" ask visitors to create an account first.
+- 📝 **Feedback survey** at `/feedback`, with private results at `/results`.
+- 💸 **Host payout ledger** at `/payouts` (private) showing which hosts are owed money.
+
+## 🛠️ Built with
+
+- [Whop](https://whop.com) hosted websites (Cloudflare Workers runtime), Whop OAuth for sign-in, Whop checkout for payments
+- TanStack Start, React 19, Vite, Tailwind CSS 4
+- [Turso](https://turso.tech) (hosted SQLite) for listings, photos, bookings and survey responses
+
+## 🗂️ Project layout
+
+| Path | What it holds |
+| --- | --- |
+| `src/routes/index.tsx` | Home page: listings, booking and listing forms |
+| `src/routes/feedback.tsx` | Feedback survey |
+| `src/routes/results.tsx`, `src/routes/api/results.ts` | Private survey results |
+| `src/routes/payouts.tsx`, `src/routes/api/payouts.ts` | Private host payout ledger |
+| `src/routes/api/oauth/*` | Whop sign-in (login and callback) |
+| `src/routes/api/photos.$id.ts` | Serves listing photos from the database |
+| `src/lib/marketplace.functions.ts` | Server functions: listings, bookings, approvals, payments |
+| `src/lib/db.server.ts` | Database connection and table setup |
+| `src/lib/survey.ts` | Survey questions and the survey version (`SURVEY_VERSION`) |
+| `src/lib/config.ts` | Platform fee percentage (`PLATFORM_FEE_PERCENT`, default 0) |
+
+## 🔐 Configuration
+
+Secrets are set as app secrets on Whop and are never committed:
+
+| Secret | Purpose |
+| --- | --- |
+| `TURSO_DATABASE_URL` | Turso database URL |
+| `TURSO_AUTH_TOKEN` | Turso access token |
+| `RESULTS_KEY` | Password for `/results` and `/payouts` |
+
+Whop supplies `APP_ID`, `WHOP_API_ORIGIN` and the API credential at runtime. Tables are created automatically on first use.
+
+## 🚀 Run it
 
 ```bash
 bun install
-bun --bun run dev
+bun run dev        # local dev server
+bun run typecheck
+bun run build
 ```
 
-# Building For Production
+Deploy with `whop apps deploy` (add `--preview true` to upload without going live).
 
-To build this application for production:
+## 🧪 Status: prototype
 
-```bash
-bun --bun run build
-```
+This works end to end, but it is a prototype. Be clear-eyed about what is and isn't real:
 
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Remove `@tailwindcss/vite` and `tailwindcss` from `package.json`
-
-
-## Deploy to Cloudflare Workers
-
-This project uses the Cloudflare Vite plugin (configured in `vite.config.ts`) and `wrangler.jsonc`:
-
-1. Install Wrangler: `npm install -g wrangler`
-2. Authenticate: `wrangler login`
-3. Deploy: `npx wrangler deploy`
-
-For production env vars, run `wrangler secret put MY_VAR` for each secret listed in `.env.example`. Public (non-secret) vars go in `wrangler.jsonc` under `vars`.
-
-KV, D1, R2, and Durable Object bindings are configured in `wrangler.jsonc` — see https://developers.cloudflare.com/workers/wrangler/configuration/.
-
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- 🚧 **Not built:** ID verification. The "Verified host" and "Verified guest" copy describes the intended design. Real listings show "Verification pending."
+- 🚧 **Not built:** the optional video intro, refunds and cancellations.
+- 🤝 **Payouts are manual.** Guests pay into the Purrfect Hour Whop balance. The owner pays hosts from there and records it in `/payouts`.
+- 🤖 **Sample cats** (Mango, Biscuit, Noodle, Professor Whiskers) and their photos are AI-generated examples. They are labeled as such and cannot be booked.
+- 🗄️ Photos are stored in the database, which is fine for a demo but should move to file storage at scale.
